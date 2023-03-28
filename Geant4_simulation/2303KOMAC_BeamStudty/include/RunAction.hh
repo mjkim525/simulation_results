@@ -47,11 +47,17 @@ class RunAction : public G4UserRunAction
 		void update_Tree()
 			{T -> Fill();}
 
+		void CountEvent()
+			{nevnts++;}
+
 	private:
 		ParameterContainer* PC;
 
 		TFile* F;
 		TTree* T;
+		TList fInputParameters;
+
+		G4int nevnts;
 
 		// Track data
 		G4int nTrack;

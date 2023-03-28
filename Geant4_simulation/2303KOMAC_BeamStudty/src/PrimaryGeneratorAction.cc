@@ -1,6 +1,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "ParameterContainer.hh"
 
+#include "G4IonTable.hh"
 #include "G4RunManager.hh"
 #include "G4ParticleGun.hh"
 #include "G4ParticleTable.hh"
@@ -15,7 +16,35 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(ParameterContainer* par)
 	PC(par)
 {
 	fParticleGun  = new G4ParticleGun();
+	if(PC->GetParInt("Beam_Input_Opt")==1)
+	{
+		fInputName = PC -> GetParString("Input_File_Name");
+		ReadInputFile();
+	}
+}
 
+PrimaryGeneratorAction::~PrimaryGeneratorAction()
+{
+	if(PC->GetParInt("Beam_Input_Opt") == 1)
+		fInputFile.close();
+  delete fParticleGun;
+}
+
+void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
+{
+	if(PC->GetParInt("Beam_Input_Opt") == 0)
+		GeneratePrimariesOpt0(anEvent);
+	else if (PC->GetParInt("Beam_Input_Opt") == 1)	{
+		GeneratePrimariesOpt1(anEvent);
+	}	else	{
+		G4ExceptionDescription out;
+		out << "ParameterContainer::Beam_Input_Opt should be the 0 or 1";
+		G4Exception("PrimaryGeneratorAction::GeneratePrimaries","",FatalException,out);
+	}
+}
+
+void PrimaryGeneratorAction::GeneratePrimariesOpt0(G4Event* anEvent)
+{
 	// default particle kinematic
 	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
 	G4String particleName = PC -> GetParString("Beam_particle");
@@ -24,15 +53,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(ParameterContainer* par)
 	fParticleGun->SetParticleDefinition(particle);
 	fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
 	fParticleGun->SetParticleEnergy(PC->GetParDouble("Beam_energy")*MeV);
-}
-
-PrimaryGeneratorAction::~PrimaryGeneratorAction()
-{
-  delete fParticleGun;
-}
-
-void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
-{
 	if (PC->GetParBool("Square_beam"))
 	{
 	   for(G4int n=0; n<PC -> GetParInt("NperEvent"); n++)
@@ -67,5 +87,69 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
 		}
 	}
+}
 
+void PrimaryGeneratorAction::GeneratePrimariesOpt1(G4Event* anEvent)
+{
+	// find event number(ID) 
+	for(G4int a=0; a<vec_eventID.size(); a++)
+	{
+		if(a == anEvent -> GetEventID())
+		{
+			if(vec_PDG[a] > 1000000000){
+				G4ParticleDefinition* particle = G4IonTable::GetIonTable()->GetIon(vec_PDG[a]);
+				fParticleGun -> SetParticleDefinition(particle);
+			}else{
+				G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(vec_PDG[a]);
+				fParticleGun -> SetParticleDefinition(particle);
+			}
+//			G4ParticleDefinition
+//			fParticleGun -> SetParticleDefinition(particle);
+			G4ThreeVector mom(vec_px[a],vec_py[a],vec_pz[a]);
+			G4ThreeVector pos(vec_vx[a],vec_py[a],vec_pz[a]);
+			fParticleGun -> SetParticleMomentumDirection(mom.unit());
+			fParticleGun -> SetParticleMomentum(mom.mag()*MeV);
+			fParticleGun -> SetParticlePosition(pos);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
+			break;
+		}
+	}
+}
+
+void PrimaryGeneratorAction::ReadInputFile()
+{
+
+	fInputFile.open(fInputName.data());
+	G4int nEvents;
+	fInputFile >> nEvents;
+	G4cout << "Input: " << fInputName << " contains " << nEvents << "events" << G4endl;
+
+	// container 
+	G4String line1, line2;
+	G4int eventID, nTracks, pdg;
+	G4double vx, vy, vz, px, py, pz;
+	getline(fInputFile,line1);	// dummy line
+	for(G4int a=0; a<nEvents; a++)
+	{
+		getline(fInputFile,line1);
+		getline(fInputFile,line2);
+		stringstream ss1(line1);
+		stringstream ss2(line2);
+		ss1 >> eventID >> nTracks >> vx >> vy >> vz;
+		ss2 >> pdg >> px >> py >> pz;
+//		G4cout << "line1(ss1) : " << line1 << G4endl;
+//		G4cout << "line2(ss2) : " << line2 << G4endl;
+//		G4cout << "eventID[" << a << "]: " << eventID << G4endl;
+//		G4cout << "PDG[" << a << "]: " << pdg << G4endl;
+
+		vec_eventID.push_back(eventID);
+		vec_PDG.push_back(pdg);
+		vec_vx.push_back(vx);
+		vec_vy.push_back(vy);
+		vec_vz.push_back(vz);
+		vec_px.push_back(px);
+		vec_py.push_back(py);
+		vec_pz.push_back(pz);
+	}
+	G4cout << G4endl;
 }

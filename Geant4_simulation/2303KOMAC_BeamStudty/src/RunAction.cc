@@ -29,7 +29,16 @@ RunAction::RunAction(ParameterContainer* par)
 
 RunAction::~RunAction()
 {
-	PC -> PrintParameter("ALL");
+//	PC -> PrintParameter("ALL");
+	map<G4String,G4String> map_input_para = PC->GetInputParameters(nevnts);
+	for(auto iter : map_input_para)
+	{
+		G4String parName = iter.first;
+		G4String parValue = iter.second;
+		TNamed* input_par = new TNamed(parName.data(),parValue.data());
+		fInputParameters.Add(input_par);
+	}
+	fInputParameters.Write("InputParameters",TObject::kSingleKey);
 	F -> Write();
 	F -> Close();
 }

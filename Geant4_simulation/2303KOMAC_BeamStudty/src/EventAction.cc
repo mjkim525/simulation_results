@@ -20,6 +20,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
 
 void EventAction::EndOfEventAction(const G4Event*)
 {  
+	fRunAction -> CountEvent();
 	fRunAction -> update_Tree();
 }
 
