@@ -12,8 +12,7 @@ using namespace std;
 class ParameterContainer
 {
 	public:
-		ParameterContainer();
-		ParameterContainer(G4String fileName);
+		static ParameterContainer* GetInstance();
 		virtual ~ParameterContainer();
 		const ParameterContainer& operator=(const ParameterContainer &right);
 		void ReadParameters();
@@ -27,8 +26,12 @@ class ParameterContainer
 			{return par_double[name];}
 		G4String GetParString(G4String name)
 			{return par_string[name];}
+		map<G4String,G4String> GetInputParameters(G4int nevnts);
 
 	private:
+		static ParameterContainer* fInstance;
+		ParameterContainer();
+
 		string par_Name;
 		map<G4String, G4bool> par_bool;
 		map<G4String, G4int> par_int;

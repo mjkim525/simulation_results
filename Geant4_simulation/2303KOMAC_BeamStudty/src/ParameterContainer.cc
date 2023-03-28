@@ -2,15 +2,18 @@
 
 #include <sstream>
 
+ParameterContainer* ParameterContainer::fInstance = 0;
+
+ParameterContainer* ParameterContainer::GetInstance()
+{
+	if(fInstance == 0)
+		fInstance = new ParameterContainer();
+	return fInstance;
+}
+
 ParameterContainer::ParameterContainer()
 {
     par_Name = "Parameters.conf";
-    ReadParameters();
-}
-
-ParameterContainer::ParameterContainer(G4String fileName)
-{
-    par_Name = fileName;
     ReadParameters();
 }
 
@@ -104,4 +107,31 @@ void ParameterContainer::PrintParameter(G4String par)
 		G4cout << par << " " << pars << G4endl;
 	else
     G4cout << "yjkim in Parameter Container" << G4endl;
+}
+
+map<G4String,G4String> ParameterContainer::GetInputParameters(G4int nevnts)
+{
+	map<G4String,G4String> map_input_para;
+	map_input_para.insert(make_pair("Nevents",to_string(nevnts)));
+	for(auto iter : par_bool){
+		G4String parName = iter.first;
+		G4String parValue = iter.second==1?"true":"false";
+		map_input_para.insert(make_pair(parName.data(),parValue.data()));
+	}
+	for(auto iter : par_int){
+		G4String parName = iter.first;
+		G4String parValue = to_string(iter.second);
+		map_input_para.insert(make_pair(parName.data(),parValue.data()));
+	}
+	for(auto iter : par_double){
+		G4String parName = iter.first;
+		G4String parValue = to_string(iter.second);
+		map_input_para.insert(make_pair(parName.data(),parValue.data()));
+	}
+	for(auto iter : par_string){
+		G4String parName = iter.first;
+		G4String parValue = iter.second;
+		map_input_para.insert(make_pair(parName.data(),parValue.data()));
+	}
+	return map_input_para;
 }

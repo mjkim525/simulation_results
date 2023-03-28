@@ -23,15 +23,16 @@ int main(int argc,char** argv)
 
 	G4RunManager* runManager = new G4RunManager;
 
-	G4String parameters = "Parameters.conf";
-	ParameterContainer* PC = new ParameterContainer(parameters);
+	ParameterContainer* PC = ParameterContainer::GetInstance();
 
 	// initialize the physics list
 	G4String physListStr = PC -> GetParString("PhysicsList");
 	G4PhysListFactory* physListFac = new G4PhysListFactory();
+	physListFac -> SetVerbose(0);
 	G4VModularPhysicsList* physicsList = physListFac ->GetReferencePhysList(physListStr.c_str());
 	runManager->SetUserInitialization(physicsList);
 	G4HadronicProcessStore::Instance() -> SetVerbose(0);
+	physicsList -> SetVerboseLevel(0);
   
 	// the random seed
 	G4int seed = PC -> GetParInt("RandomSeed");
@@ -47,6 +48,7 @@ int main(int argc,char** argv)
 	// Initialize visualization
 	//
 	G4VisManager* visManager = new G4VisExecutive;
+	visManager -> SetVerboseLevel(0);
 	visManager->Initialize();
 
 	// Get the pointer to the User Interface manager
@@ -76,4 +78,5 @@ int main(int argc,char** argv)
 
 	delete visManager;
 	delete runManager;
+	delete PC;
 }

@@ -1,5 +1,1 @@
-/run/numberOfThreads 16
-/run/initialize
-/run/beamOn 10000
-
-exit
+../run1.mac
