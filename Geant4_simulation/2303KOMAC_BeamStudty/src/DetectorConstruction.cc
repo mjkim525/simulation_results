@@ -151,24 +151,38 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(0, posCollY, logicCollX, "CollimatorY", logicWorld, false, CollID, checkOverlaps);
 	}
 
-	if (PC->GetParBool("TubeIn"))
+	if (PC->GetParBool("SC1_In"))
 	{
-		G4Material* Collmat = new G4Material("Acrylic",1.19*g/cm3,3,kStateSolid, 293.15*kelvin);
-		Collmat -> AddElement(elC,5);
-		Collmat -> AddElement(elH,8);
-		Collmat -> AddElement(elO,2);
+		G4Material* Collmat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
 
-		G4double innerRadius = 0. * mm;
-		G4double outerRadius = 125. * mm;
-		G4double halfLength  = 100. * mm;
+		G4double innerRadius = 150. * mm;
+		G4double outerRadius = 450. * mm;
+		G4double halfLength  = 0.5 * mm;
 		G4double startAngle  = 0. * deg;
-		G4double spanningAngle = 360. * deg;
+		G4double spanningAngle = 45. * deg;
 
 		G4Tubs* tube = new G4Tubs("tube", innerRadius, outerRadius, halfLength, startAngle, spanningAngle);
 		G4LogicalVolume* logicTube = new G4LogicalVolume(tube, Collmat, "logicTube");
 
-		G4ThreeVector posCollX(0, 0, -1835.);
-		new G4PVPlacement(0, posCollX, logicTube, "physiTube", logicWorld, false, -3, checkOverlaps);
+		G4ThreeVector posCollX(0, 0, 1000.);
+		new G4PVPlacement(0, posCollX, logicTube, "physiTube", logicWorld, false, -4, checkOverlaps);
+	}
+
+	if (PC->GetParBool("SC2_In"))
+	{
+		G4Material* Collmat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+
+		G4double innerRadius = 150. * mm;
+		G4double outerRadius = 450. * mm;
+		G4double halfLength  = 0.5 * mm;
+		G4double startAngle  = 0. * deg;
+		G4double spanningAngle = 45. * deg;
+
+		G4Tubs* tube = new G4Tubs("tube", innerRadius, outerRadius, halfLength, startAngle, spanningAngle);
+		G4LogicalVolume* logicTube = new G4LogicalVolume(tube, Collmat, "logicTube");
+
+		G4ThreeVector posCollX(0, 0, 1010.);
+		new G4PVPlacement(0, posCollX, logicTube, "physiTube", logicWorld, false, -5, checkOverlaps);
 	}
 
 		if (PC->GetParBool("H_PolyBox"))
