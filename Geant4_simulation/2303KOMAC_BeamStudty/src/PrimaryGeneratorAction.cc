@@ -1,6 +1,6 @@
+#include <random>
 #include "PrimaryGeneratorAction.hh"
 #include "ParameterContainer.hh"
-
 #include "G4IonTable.hh"
 #include "G4RunManager.hh"
 #include "G4ParticleGun.hh"
@@ -92,23 +92,30 @@ void PrimaryGeneratorAction::GeneratePrimariesOpt0(G4Event* anEvent)
 
 void PrimaryGeneratorAction::GeneratePrimariesOpt1(G4Event* anEvent)
 {
+
 	// find event number(ID) 
-	for(G4int a=0; a<vec_eventID.size(); a++)
+	for(G4int n=0; n<PC -> GetParInt("NperEvent"); n++)
 	{
-		
-			if(vec_PDG[a] > 1000000000){
-				G4ParticleDefinition* particle = G4IonTable::GetIonTable()->GetIon(vec_PDG[a]);
-				fParticleGun -> SetParticleDefinition(particle);
-			}else{
-				G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(vec_PDG[a]);
-				fParticleGun -> SetParticleDefinition(particle);
-			}
-			G4ThreeVector mom(vec_px[a],vec_py[a],vec_pz[a]);
-			G4ThreeVector pos(vec_vx[a],vec_vy[a],vec_vz[a]);
-			fParticleGun -> SetParticleMomentumDirection(mom.unit());
-			fParticleGun -> SetParticleMomentum(mom.mag()*MeV);
-			fParticleGun -> SetParticlePosition(pos);
-			fParticleGun -> GeneratePrimaryVertex(anEvent);
+		std::random_device rd; 
+		std::mt19937 gen(rd()); 
+		std::uniform_int_distribution<int> dis_0(0,vec_eventID.size()-1);
+	
+		int a = dis_0(gen);
+
+		if(vec_PDG[a] > 1000000000){
+			G4ParticleDefinition* particle = G4IonTable::GetIonTable()->GetIon(vec_PDG[a]);
+			fParticleGun -> SetParticleDefinition(particle);
+		}else{
+			G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(vec_PDG[a]);
+			fParticleGun -> SetParticleDefinition(particle);
+		}
+
+		G4ThreeVector mom(vec_px[a],vec_py[a],vec_pz[a]);
+		G4ThreeVector pos(vec_vx[a],vec_vy[a],vec_vz[a]);
+		fParticleGun -> SetParticleMomentumDirection(mom.unit());
+		fParticleGun -> SetParticleMomentum(mom.mag()*MeV);
+		fParticleGun -> SetParticlePosition(pos);
+		fParticleGun -> GeneratePrimaryVertex(anEvent);
 	}
 }
 
