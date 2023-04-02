@@ -1,1 +1,5 @@
-../run1.mac
+/run/numberOfThreads 16
+/run/initialize
+/run/beamOn 1
+
+exit

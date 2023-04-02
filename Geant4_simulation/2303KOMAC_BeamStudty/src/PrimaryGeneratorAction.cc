@@ -16,7 +16,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(ParameterContainer* par)
 	PC(par)
 {
 	fParticleGun  = new G4ParticleGun();
-	if(PC->GetParInt("Beam_Input_Opt")==1)
+	if(PC->GetParInt("Beam_Input_Opt") == 1)
 	{
 		fInputName = PC -> GetParString("Input_File_Name");
 		ReadInputFile();
@@ -29,6 +29,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 		fInputFile.close();
   delete fParticleGun;
 }
+
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
@@ -94,8 +95,7 @@ void PrimaryGeneratorAction::GeneratePrimariesOpt1(G4Event* anEvent)
 	// find event number(ID) 
 	for(G4int a=0; a<vec_eventID.size(); a++)
 	{
-		if(a == anEvent -> GetEventID())
-		{
+		
 			if(vec_PDG[a] > 1000000000){
 				G4ParticleDefinition* particle = G4IonTable::GetIonTable()->GetIon(vec_PDG[a]);
 				fParticleGun -> SetParticleDefinition(particle);
@@ -103,44 +103,32 @@ void PrimaryGeneratorAction::GeneratePrimariesOpt1(G4Event* anEvent)
 				G4ParticleDefinition* particle = G4ParticleTable::GetParticleTable()->FindParticle(vec_PDG[a]);
 				fParticleGun -> SetParticleDefinition(particle);
 			}
-//			G4ParticleDefinition
-//			fParticleGun -> SetParticleDefinition(particle);
 			G4ThreeVector mom(vec_px[a],vec_py[a],vec_pz[a]);
-			G4ThreeVector pos(vec_vx[a],vec_py[a],vec_pz[a]);
+			G4ThreeVector pos(vec_vx[a],vec_vy[a],vec_vz[a]);
 			fParticleGun -> SetParticleMomentumDirection(mom.unit());
 			fParticleGun -> SetParticleMomentum(mom.mag()*MeV);
 			fParticleGun -> SetParticlePosition(pos);
-			fParticleGun->GeneratePrimaryVertex(anEvent);
-			break;
-		}
+			fParticleGun -> GeneratePrimaryVertex(anEvent);
 	}
 }
 
 void PrimaryGeneratorAction::ReadInputFile()
 {
-
 	fInputFile.open(fInputName.data());
-	G4int nEvents;
-	fInputFile >> nEvents;
-	G4cout << "Input: " << fInputName << " contains " << nEvents << "events" << G4endl;
-
+	G4int nEvents = 0;
 	// container 
 	G4String line1, line2;
 	G4int eventID, nTracks, pdg;
 	G4double vx, vy, vz, px, py, pz;
-	getline(fInputFile,line1);	// dummy line
-	for(G4int a=0; a<nEvents; a++)
+	//getline(fInputFile,line1);	// dummy line
+	 while (getline(fInputFile, line1) && getline(fInputFile, line2))
 	{
-		getline(fInputFile,line1);
-		getline(fInputFile,line2);
+		//getline(fInputFile,line1);
+		//getline(fInputFile,line2);
 		stringstream ss1(line1);
 		stringstream ss2(line2);
 		ss1 >> eventID >> nTracks >> vx >> vy >> vz;
 		ss2 >> pdg >> px >> py >> pz;
-//		G4cout << "line1(ss1) : " << line1 << G4endl;
-//		G4cout << "line2(ss2) : " << line2 << G4endl;
-//		G4cout << "eventID[" << a << "]: " << eventID << G4endl;
-//		G4cout << "PDG[" << a << "]: " << pdg << G4endl;
 
 		vec_eventID.push_back(eventID);
 		vec_PDG.push_back(pdg);
@@ -150,6 +138,11 @@ void PrimaryGeneratorAction::ReadInputFile()
 		vec_px.push_back(px);
 		vec_py.push_back(py);
 		vec_pz.push_back(pz);
+
+		++nEvents;
 	}
+
+	G4cout << "Input: " << fInputName <<  " contains " << nEvents <<" "<< "events" << G4endl;
+
 	G4cout << G4endl;
 }
