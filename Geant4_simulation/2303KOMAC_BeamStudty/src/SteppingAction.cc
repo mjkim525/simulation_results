@@ -20,13 +20,21 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 	G4int trackPDG = step -> GetTrack() -> GetDefinition() -> GetPDGEncoding();
 	G4ThreeVector pos = step -> GetPreStepPoint() -> GetPosition();
 	G4double edep = step -> GetTotalEnergyDeposit();
-	G4int prevNo = step -> GetPreStepPoint()  -> GetPhysicalVolume() -> GetCopyNo();
+	G4int prevNo = step -> GetPreStepPoint()  -> GetPhysicalVolume() -> GetCopyNo(); //Get pre. volumeID (step to material inside)
+	G4double Step_dt = step -> GetDeltaTime();
 	G4int postNo = 0;
 	if(stat == fWorldBoundary)
 		return;
 	else
 		postNo = step -> GetPostStepPoint() -> GetPhysicalVolume() -> GetCopyNo();
 
-	if(ParameterContainer::GetInstance()->GetParBool("MCStep"))
-		fRunAction -> FillStep(trackID, trackPDG, prevNo, postNo, pos, edep);
+	if(ParameterContainer::GetInstance()->GetParBool("MCStep") && prevNo == ParameterContainer::GetInstance()->GetParInt("SC1_ID") && postNo == ParameterContainer::GetInstance()->GetParInt("WorldID") && trackID == 1)
+		fRunAction -> FillStep(trackID, trackPDG, prevNo, postNo, pos, edep, Step_dt);
+	//for dt
+	if(ParameterContainer::GetInstance()->GetParBool("MCStep") && postNo == ParameterContainer::GetInstance()->GetParInt("SC2_ID") && prevNo == ParameterContainer::GetInstance()->GetParInt("WorldID") && trackID == 1)
+		fRunAction -> FillStep(trackID, trackPDG, prevNo, postNo, pos, edep, Step_dt);
+
+	if(ParameterContainer::GetInstance()->GetParBool("MCStep") && prevNo == ParameterContainer::GetInstance()->GetParInt("SC2_ID") && postNo == ParameterContainer::GetInstance()->GetParInt("WorldID") && trackID == 1)
+		fRunAction -> FillStep(trackID, trackPDG, prevNo, postNo, pos, edep, Step_dt);
+	
 }

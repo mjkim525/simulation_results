@@ -2,7 +2,7 @@
 #define RunAction_h 1
 
 #define max_tracks 10000000
-#define max_steps 10000000
+#define max_steps  10000000
 
 #include "G4UserRunAction.hh"
 #include "G4Accumulable.hh"
@@ -42,7 +42,7 @@ class RunAction : public G4UserRunAction
 
 		void FillStep
 			(G4int trkID, G4int pdg, G4int prev_detID, G4int post_detID,
-			 G4ThreeVector v, G4double edep);
+			 G4ThreeVector v, G4double edep, G4double Step_dt);
 
 		void update_Tree()
 			{T -> Fill();}
@@ -97,8 +97,8 @@ class RunAction : public G4UserRunAction
 		G4double StepVY[max_steps];
 		G4double StepVZ[max_steps];
 		G4double StepEdep[max_steps];
-
-		G4double EdepSumBox;
+		G4double Step_delta_t[max_steps];
+		//G4double EdepSumBox;
 
 };
 #endif

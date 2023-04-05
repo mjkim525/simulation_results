@@ -93,9 +93,10 @@ void RunAction::init_Tree()
 		T -> Branch("StepVY",StepVY,"StepVY[nStep]/D");
 		T -> Branch("StepVZ",StepVZ,"StepVZ[nStep]/D");
 		T -> Branch("StepEdep",StepEdep,"StepEdep[nStep]/D");
+		T -> Branch("Step_delta_t",Step_delta_t,"Step_delta_t[nStep]/D");
 
 		// for energy sum of box
-		T -> Branch("EdepSumBox",&EdepSumBox);
+		//T -> Branch("EdepSumBox",&EdepSumBox);
 	}
 }
 
@@ -144,7 +145,8 @@ void RunAction::clear_data()
 	fill_n(StepVY,max_steps,0);
 	fill_n(StepVZ,max_steps,0);
 	fill_n(StepEdep,max_steps,0);
-	EdepSumBox = 0;
+	fill_n(Step_delta_t,max_steps,0);
+	//EdepSumBox = 0;
 }
 
 void RunAction::FillTrack
@@ -190,20 +192,21 @@ void RunAction::FillTrack
 }
 
 void RunAction::FillStep
-(G4int trkID, G4int pdg, G4int prev_detID, G4int post_detID, G4ThreeVector v, G4double edep)
+(G4int trkID, G4int pdg, G4int prev_detID, G4int post_detID, G4ThreeVector v, G4double edep, G4double Step_dt)
 {
-	if(prev_detID != post_detID)	// at the boundary
-		StepDetID[nStep] = post_detID;	// mainly this case means particle track killed in a volume
-	else
-		StepDetID[nStep] = prev_detID;
+//	if(prev_detID != post_detID)	// at the boundary
+//		StepDetID[nStep] = post_detID;	// mainly this case means particle track killed in a volume
+//	else
+	StepDetID[nStep] = prev_detID;
 	StepTrackID[nStep] = trkID;
 	StepTrackPDG[nStep] = pdg;
 	StepVX[nStep] = v.x();
 	StepVY[nStep] = v.y();
 	StepVZ[nStep] = v.z();
 	StepEdep[nStep] = edep;
+	Step_delta_t[nStep] = Step_dt;
 
-	if(StepDetID[nStep] == PC -> GetParInt("BoxID"))
-		EdepSumBox += edep;
+	//if(StepDetID[nStep] == PC -> GetParInt("BoxID"))
+		//EdepSumBox += edep;
 	nStep++;
 }

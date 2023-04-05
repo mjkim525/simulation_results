@@ -61,7 +61,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		// Box collimator
 	if (PC->GetParBool("BoxIn"))
 	{
-		G4Material* Collmat = new G4Material("Acrylic",1.19*g/cm3,3,kStateSolid, 293.15*kelvin);
+		G4Material* Collmat = new G4Material("Acrylic",1.19*g/cm3,3,kStateSolid, fLabTemp);
 		Collmat -> AddElement(elC,5);
 		Collmat -> AddElement(elH,8);
 		Collmat -> AddElement(elO,2);
@@ -151,38 +151,52 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(0, posCollY, logicCollX, "CollimatorY", logicWorld, false, CollID, checkOverlaps);
 	}
 
-	if (PC->GetParBool("SC1_In"))
+	if (PC->GetParBool("SC1_In")) // box style
 	{
 		G4Material* Collmat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
 
-		G4double innerRadius = 150. * mm;
-		G4double outerRadius = 450. * mm;
-		G4double halfLength  = 0.5 * mm;
-		G4double startAngle  = 0. * deg;
-		G4double spanningAngle = 45. * deg;
+		G4int	 CollID	   = PC ->GetParInt("SC1_ID");
+		G4double CollDimX  = PC ->GetParDouble("SC1_sizeX");	// one brick [] 
+		G4double CollDimY  = PC ->GetParDouble("SC1_sizeY");
+		G4double CollDimZ  = PC ->GetParDouble("SC1_sizeZ");
+		G4double CollPosX  = PC ->GetParDouble("SC1_Xpos");
+		G4double CollPosY  = PC ->GetParDouble("SC1_Ypos");
+		G4double CollPosZ  = PC ->GetParDouble("SC1_Zpos");
 
-		G4Tubs* tube = new G4Tubs("tube", innerRadius, outerRadius, halfLength, startAngle, spanningAngle);
-		G4LogicalVolume* logicTube = new G4LogicalVolume(tube, Collmat, "logicTube");
+		G4Box* solidBox = new G4Box("SC1",0.5*CollDimX,0.5*CollDimY,0.5*CollDimZ); // 100 * 100 * 0.5
+		G4LogicalVolume* logicBox = new G4LogicalVolume(solidBox,Collmat,"SC1");
 
-		G4ThreeVector posCollX(0, 0, 1000.);
-		new G4PVPlacement(0, posCollX, logicTube, "physiTube", logicWorld, false, -4, checkOverlaps);
+		G4VisAttributes* attBox = new G4VisAttributes(G4Colour(G4Colour::Gray()));
+		attBox -> SetVisibility(true);
+		attBox -> SetForceWireframe(true);
+		logicBox -> SetVisAttributes(attBox);
+
+		G4ThreeVector posCollX(CollPosX,CollPosY, CollPosZ + CollDimZ/2.);
+		new G4PVPlacement(0, posCollX, logicBox, "SC1", logicWorld, false, CollID, checkOverlaps);
 	}
 
 	if (PC->GetParBool("SC2_In"))
 	{
 		G4Material* Collmat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
 
-		G4double innerRadius = 150. * mm;
-		G4double outerRadius = 450. * mm;
-		G4double halfLength  = 0.5 * mm;
-		G4double startAngle  = 0. * deg;
-		G4double spanningAngle = 45. * deg;
+		G4int	 CollID	   = PC ->GetParInt("SC2_ID");
+		G4double CollDimX  = PC ->GetParDouble("SC2_sizeX");	// one brick [] 
+		G4double CollDimY  = PC ->GetParDouble("SC2_sizeY");
+		G4double CollDimZ  = PC ->GetParDouble("SC2_sizeZ");
+		G4double CollPosX  = PC ->GetParDouble("SC2_Xpos");
+		G4double CollPosY  = PC ->GetParDouble("SC2_Ypos");
+		G4double CollPosZ  = PC ->GetParDouble("SC2_Zpos");
 
-		G4Tubs* tube = new G4Tubs("tube", innerRadius, outerRadius, halfLength, startAngle, spanningAngle);
-		G4LogicalVolume* logicTube = new G4LogicalVolume(tube, Collmat, "logicTube");
+		G4Box* solidBox = new G4Box("SC2",0.5*CollDimX,0.5*CollDimY,0.5*CollDimZ); // 100 * 100 * 0.5
+		G4LogicalVolume* logicBox = new G4LogicalVolume(solidBox,Collmat,"SC2");
 
-		G4ThreeVector posCollX(0, 0, 1010.);
-		new G4PVPlacement(0, posCollX, logicTube, "physiTube", logicWorld, false, -5, checkOverlaps);
+		G4VisAttributes* attBox = new G4VisAttributes(G4Colour(G4Colour::Gray()));
+		attBox -> SetVisibility(true);
+		attBox -> SetForceWireframe(true);
+		logicBox -> SetVisAttributes(attBox);
+
+		G4ThreeVector posCollX(CollPosX,CollPosY, CollPosZ + CollDimZ/2.);
+		new G4PVPlacement(0, posCollX, logicBox, "SC2", logicWorld, false, CollID, checkOverlaps);
 	}
 
 		if (PC->GetParBool("H_PolyBox"))

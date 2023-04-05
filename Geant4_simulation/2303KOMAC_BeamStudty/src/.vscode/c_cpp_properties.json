@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/home/mjkim/Geant4/simulation_results/Geant4_simulation/2303KOMAC_BeamStudty/include",
+                "/home/mjkim/CLHEP/2.3.4.6/CLHEP/install/include/CLHEP",
+                "/home/mjkim/ROOT/root_install/include",
+                "/home/mjkim/Geant4/geant4.source/install/include/Geant4",
+                "/home/mjkim/CLHEP/2.3.4.6/CLHEP/install/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
