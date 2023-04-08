@@ -93,7 +93,7 @@ void RunAction::init_Tree()
 		T -> Branch("StepVY",StepVY,"StepVY[nStep]/D");
 		T -> Branch("StepVZ",StepVZ,"StepVZ[nStep]/D");
 		T -> Branch("StepEdep",StepEdep,"StepEdep[nStep]/D");
-		T -> Branch("Step_delta_t",Step_delta_t,"Step_delta_t[nStep]/D");
+		T -> Branch("Step_t",Step_t,"Step_t[nStep]/D");
 
 		// for energy sum of box
 		//T -> Branch("EdepSumBox",&EdepSumBox);
@@ -145,7 +145,7 @@ void RunAction::clear_data()
 	fill_n(StepVY,max_steps,0);
 	fill_n(StepVZ,max_steps,0);
 	fill_n(StepEdep,max_steps,0);
-	fill_n(Step_delta_t,max_steps,0);
+	fill_n(Step_t,max_steps,0);
 	//EdepSumBox = 0;
 }
 
@@ -204,7 +204,7 @@ void RunAction::FillStep
 	StepVY[nStep] = v.y();
 	StepVZ[nStep] = v.z();
 	StepEdep[nStep] = edep;
-	Step_delta_t[nStep] = Step_dt;
+	Step_t[nStep] = Step_dt;
 
 	//if(StepDetID[nStep] == PC -> GetParInt("BoxID"))
 		//EdepSumBox += edep;

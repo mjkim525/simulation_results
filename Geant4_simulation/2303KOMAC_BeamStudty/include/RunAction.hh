@@ -97,7 +97,7 @@ class RunAction : public G4UserRunAction
 		G4double StepVY[max_steps];
 		G4double StepVZ[max_steps];
 		G4double StepEdep[max_steps];
-		G4double Step_delta_t[max_steps];
+		G4double Step_t[max_steps];
 		//G4double EdepSumBox;
 
 };
