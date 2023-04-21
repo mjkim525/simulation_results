@@ -18,7 +18,7 @@
 int main(int argc,char** argv)
 {
 	G4UIExecutive* ui = 0;
-	if ( argc == 2 ) 
+	if ( argc == 1 ) 
 		ui = new G4UIExecutive(argc, argv);
 
 	G4RunManager* runManager = new G4RunManager;

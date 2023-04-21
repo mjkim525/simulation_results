@@ -37,7 +37,7 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/home/mjkim/install/clhep_install/lib/CLHEP-2.4.1.3/../../include"
-  "/home/mjkim/ROOT/root/include"
+  "/home/mjkim/ROOT/root_install/include"
   "../include"
   "/home/mjkim/Geant4/geant4.source/install/include/Geant4"
   "/home/mjkim/install/clhep_install/include"

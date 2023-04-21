@@ -1,5 +1,5 @@
 /run/numberOfThreads 16
 /run/initialize
-/run/beamOn 100
+/run/beamOn 10
 
 exit

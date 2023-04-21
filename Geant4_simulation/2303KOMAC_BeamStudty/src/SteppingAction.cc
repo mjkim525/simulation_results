@@ -14,7 +14,9 @@ SteppingAction::~SteppingAction()
 
 void SteppingAction::UserSteppingAction(const G4Step* step)
 {
+	
 	// information of each steps
+	
 	G4StepStatus stat = step -> GetPostStepPoint() -> GetStepStatus();
 	G4int trackID = step -> GetTrack() -> GetTrackID();
 	G4int trackPDG = step -> GetTrack() -> GetDefinition() -> GetPDGEncoding();
@@ -29,9 +31,13 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 		postNo = step -> GetPostStepPoint() -> GetPhysicalVolume() -> GetCopyNo();
 
 	if(ParameterContainer::GetInstance()->GetParBool("MCStep") && prevNo == ParameterContainer::GetInstance()->GetParInt("SC1_ID"))
+	{
 		fRunAction -> FillStep(trackID, trackPDG, prevNo, postNo, pos, edep, Step_dt);
+	}
 
 	if(ParameterContainer::GetInstance()->GetParBool("MCStep") && prevNo == ParameterContainer::GetInstance()->GetParInt("SC2_ID"))
+	{
 		fRunAction -> FillStep(trackID, trackPDG, prevNo, postNo, pos, edep, Step_dt);
+	}
 	
 }

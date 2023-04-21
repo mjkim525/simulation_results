@@ -96,12 +96,13 @@ void PrimaryGeneratorAction::GeneratePrimariesOpt1(G4Event* anEvent)
 	// find event number(ID) 
 	for(G4int n=0; n<PC -> GetParInt("NperEvent"); n++)
 	{
+		
 		std::random_device rd; 
 		std::mt19937 gen(rd()); 
 		std::uniform_int_distribution<int> dis_0(0,vec_eventID.size()-1);
+		
 	
 		int a = dis_0(gen);
-
 		if(vec_PDG[a] > 1000000000){
 			G4ParticleDefinition* particle = G4IonTable::GetIonTable()->GetIon(vec_PDG[a]);
 			fParticleGun -> SetParticleDefinition(particle);
@@ -152,4 +153,5 @@ void PrimaryGeneratorAction::ReadInputFile()
 	G4cout << "Input: " << fInputName <<  " contains " << nEvents <<" "<< "events" << G4endl;
 
 	G4cout << G4endl;
+
 }

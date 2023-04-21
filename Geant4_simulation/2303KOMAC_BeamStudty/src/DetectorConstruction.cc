@@ -151,6 +151,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(0, posCollY, logicCollX, "CollimatorY", logicWorld, false, CollID, checkOverlaps);
 	}
 
+
 	if (PC->GetParBool("SC1_In")) // box style
 	{
 		G4Material* Collmat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
@@ -166,7 +167,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		G4Box* solidBox = new G4Box("SC1",0.5*CollDimX,0.5*CollDimY,0.5*CollDimZ); // 100 * 100 * 0.5
 		G4LogicalVolume* logicBox = new G4LogicalVolume(solidBox,Collmat,"SC1");
 
-		G4VisAttributes* attBox = new G4VisAttributes(G4Colour(G4Colour::Gray()));
+		G4VisAttributes* attBox = new G4VisAttributes(G4Colour(G4Colour::Red()));
 		attBox -> SetVisibility(true);
 		attBox -> SetForceWireframe(true);
 		logicBox -> SetVisAttributes(attBox);
@@ -190,7 +191,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		G4Box* solidBox = new G4Box("SC2",0.5*CollDimX,0.5*CollDimY,0.5*CollDimZ); // 100 * 100 * 0.5
 		G4LogicalVolume* logicBox = new G4LogicalVolume(solidBox,Collmat,"SC2");
 
-		G4VisAttributes* attBox = new G4VisAttributes(G4Colour(G4Colour::Gray()));
+		G4VisAttributes* attBox = new G4VisAttributes(G4Colour(G4Colour::Red()));
 		attBox -> SetVisibility(true);
 		attBox -> SetForceWireframe(true);
 		logicBox -> SetVisAttributes(attBox);
@@ -257,6 +258,50 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(0, posCollX, logicCollX, "CollimatorX", logicWorld, false, CollID, checkOverlaps);
 	}
 
+		if (PC->GetParBool("H_BPolyBox_slit"))
+	{
+		G4Material* H_Poly = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
+		G4Material* Boron = nist->FindOrBuildMaterial("G4_B");
+
+
+		G4Material *fBP = new G4Material("BoratedPolyethylene",1.11*g/cm3,2);
+		fBP -> AddMaterial(H_Poly,50*perCent);
+		fBP -> AddMaterial(Boron,50*perCent);
+		
+		G4int	 CollID	   = PC ->GetParInt("SBoxID");
+		G4double CollDimX  = PC ->GetParDouble("SBox_sizeX");	// one brick [] 
+		G4double CollDimY  = PC ->GetParDouble("SBox_sizeY");
+		G4double CollDimZ  = PC ->GetParDouble("SBox_sizeZ");
+		G4double CollslitX = PC ->GetParDouble("SBox_slitX");
+		G4double CollslitY = PC ->GetParDouble("SBox_slitY");
+		G4double CollPosZ  = PC ->GetParDouble("SBox_Zpos");
+
+		//Volumes
+		G4Box* solidBoxColl = new G4Box("solidBoxColl", CollDimX/2., CollDimY/2., CollDimZ/2.);
+
+		G4Box* solidSubCollX = new G4Box("solidSubCollX", CollslitX/2., CollDimY/2.-0.1 , CollDimZ/2.);
+		G4Box* solidSubCollY = new G4Box("solidSubCollY", CollDimX/2.-0.1 , CollslitY/2., CollDimZ/2.);
+		G4SubtractionSolid* solidCollX = new G4SubtractionSolid("solidCollX", solidBoxColl, solidSubCollX, 0, fZero);
+		G4SubtractionSolid* solidCollY = new G4SubtractionSolid("solidCollY", solidBoxColl, solidSubCollY, 0, fZero);
+		G4LogicalVolume* logicCollX = new G4LogicalVolume(solidCollX, fBP, "logicCollimatorX");
+		G4LogicalVolume* logicCollY = new G4LogicalVolume(solidCollY, fBP, "logicCollimatorY");
+
+		//vis attributes
+		G4VisAttributes* attColl = new G4VisAttributes(G4Colour(G4Colour::Gray()));
+		G4VisAttributes* attColl1 = new G4VisAttributes(G4Colour(G4Colour::Cyan()));
+		attColl->SetVisibility(true);
+		attColl->SetForceWireframe(true);
+		attColl1->SetVisibility(true);
+		attColl1->SetForceWireframe(true);
+		logicCollX->SetVisAttributes(attColl);
+		logicCollY->SetVisAttributes(attColl1);
+
+		//Position
+		G4ThreeVector posCollX(0, 0, CollPosZ + CollDimZ/2.);
+		G4ThreeVector posCollY(0, 0, CollPosZ + CollDimZ/2. + CollDimZ);
+		new G4PVPlacement(0, posCollX, logicCollY, "CollimatorX", logicWorld, false, CollID, checkOverlaps);
+		new G4PVPlacement(0, posCollY, logicCollX, "CollimatorY", logicWorld, false, CollID, checkOverlaps);
+	}
 
 
 	return physWorld;
