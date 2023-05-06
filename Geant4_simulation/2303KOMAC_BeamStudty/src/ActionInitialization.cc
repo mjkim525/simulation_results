@@ -13,13 +13,24 @@ ActionInitialization::ActionInitialization(ParameterContainer* par)
 	PC = par;
 }
 
+
 ActionInitialization::~ActionInitialization()
 {}
 
 void ActionInitialization::BuildForMaster() const
 {
+ /* 
   RunAction* runAction = new RunAction(PC);
   SetUserAction(runAction);
+  */
+  RunAction* runAction = new RunAction(PC);
+  SetUserAction(runAction);
+  
+  EventAction* eventAction = new EventAction(runAction);
+  SetUserAction(eventAction);
+  
+  SetUserAction(new TrackingAction(runAction));
+  SetUserAction(new SteppingAction(runAction));
   
 }
 

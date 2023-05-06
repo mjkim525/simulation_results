@@ -1,8 +1,8 @@
 #ifndef RunAction_h
 #define RunAction_h 1
 
-#define max_tracks 1000
-#define max_steps  1000
+#define max_tracks 3000
+#define max_steps  3000
 
 #include "G4UserRunAction.hh"
 #include "G4Accumulable.hh"

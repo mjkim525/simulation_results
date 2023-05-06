@@ -4,11 +4,10 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/mjkim/Geant4/simulation_results/Geant4_simulation/2303KOMAC_BeamStudty/include",
-                "/home/mjkim/CLHEP/2.3.4.6/CLHEP/install/include/CLHEP",
-                "/home/mjkim/ROOT/root_install/include",
-                "/home/mjkim/Geant4/geant4.source/install/include/Geant4",
-                "/home/mjkim/CLHEP/2.3.4.6/CLHEP/install/include"
+                "/home/mj525/Works/2023_FH_KOMAC_G4_11/sim_dir/simulation_results/Geant4_simulation/2303KOMAC_BeamStudty/include",
+                "/home/mj525/Programs/clhep/2.4.6.3/2.4.6.3/install/include",
+                "/home/mj525/Programs/root/root-6.26/include",
+                "/home/mj525/Programs/geant4/GEANT4_11_0/install/include/Geant4"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

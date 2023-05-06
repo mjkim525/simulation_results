@@ -32,25 +32,26 @@ void ParameterContainer::ReadParameters()
 
         if(val_name[0] == '#') continue;
 
-        if(val_type.contains("b") || val_type.contains("bool"))
+        //if(val_type.contains("b") || val_type.contains("bool"))
+		if(G4StrUtil::contains(val_type,"b") || G4StrUtil::contains(val_type,"bool"))
         {
             G4bool val = 0;
             ss >> val;
             par_bool.insert(make_pair(val_name,val));
         }
-        if(val_type.contains("i") || val_type.contains("int"))
+        if(G4StrUtil::contains(val_type,"i") || G4StrUtil::contains(val_type,"int"))
         {
             G4int val = -1;
             ss >> val;
             par_int.insert(make_pair(val_name,val));
 		}
-        if(val_type.contains("d") || val_type.contains("double"))
+        if(G4StrUtil::contains(val_type,"d") || G4StrUtil::contains(val_type,"double"))
         {
             G4double val = 0;
             ss >> val;
             par_double.insert(make_pair(val_name,val));
         }
-        if(val_type.contains("s") || val_type.contains("string"))
+        if(G4StrUtil::contains(val_type,"s") || G4StrUtil::contains(val_type,"string"))
         {
             G4String val;
             ss >> val;

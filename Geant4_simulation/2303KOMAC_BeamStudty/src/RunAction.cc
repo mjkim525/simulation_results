@@ -17,6 +17,7 @@
 #include <functional>
 #include <map>
 
+
 RunAction::RunAction(ParameterContainer* par)
 : G4UserRunAction(),
 	PC(par)
@@ -26,6 +27,7 @@ RunAction::RunAction(ParameterContainer* par)
 
 	init_Tree();
 }
+
 
 RunAction::~RunAction()
 {
@@ -42,6 +44,7 @@ RunAction::~RunAction()
 	F -> Write();
 	F -> Close();
 }
+
 
 void RunAction::init_Tree()
 {
@@ -159,6 +162,7 @@ void RunAction::FillTrack
 		TrackID[nTrack] = trkID;
 		ParentID[nTrack] = parentID;
 		TrackPDG[nTrack] = pdg;
+//		if(TrackPDG[nTrack]==2212){
 		TrackDetID[nTrack] = detID;
 		TrackPX[nTrack] = p.x();
 		TrackPY[nTrack] = p.y();
@@ -168,12 +172,14 @@ void RunAction::FillTrack
 		TrackVZ[nTrack] = v.z();
 		TrackEnergy[nTrack] = totenergy;
 		TrackKEnergy[nTrack] = kinenergy;
+//		}
 		nTrack++;
 	}
 	else if(opt == MCPostTrack)	// end point, post Track
 	{
 		PostTrackID[nPostTrack] = trkID;
 		PostTrackPDG[nPostTrack] = pdg;
+//		if(PostTrackPDG[nPostTrack]==2212){
 		PostTrackDetID[nPostTrack] = detID;
 		PostTrackPX[nPostTrack] = p.x();
 		PostTrackPY[nPostTrack] = p.y();
@@ -183,6 +189,7 @@ void RunAction::FillTrack
 		PostTrackVZ[nPostTrack] = v.z();
 		PostTrackEnergy[nPostTrack] = totenergy;
 		PostTrackKEnergy[nPostTrack] = kinenergy;
+//		}
 		nPostTrack++;
 	}
 	else
