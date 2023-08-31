@@ -87,7 +87,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		//Target
 	if (PC->GetParBool("TargetIn"))
 	{
-		G4Material* TargetMat = nist->FindOrBuildMaterial("G4_C");
+		G4Material* TargetMat = nist->FindOrBuildMaterial("G4_GRAPHITE");
 		//G4Material* TargetMat = nist->FindOrBuildMaterial("G4_Al");
 
 		G4int TargetID = PC -> GetParInt("TargetID");
@@ -151,6 +151,32 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(0, posCollY, logicCollX, "CollimatorY", logicWorld, false, CollID, checkOverlaps);
 	}
 
+	if (PC->GetParBool("Up_Shield_In"))
+	{
+		G4Material* Collmat = new G4Material("Acrylic",1.19*g/cm3,3,kStateSolid, fLabTemp);
+		Collmat -> AddElement(elC,5);
+		Collmat -> AddElement(elH,8);
+		Collmat -> AddElement(elO,2);
+
+		G4int boxID = PC -> GetParInt("Up_Shield_ID");
+		G4double box_sizeX = PC -> GetParDouble("Up_Shield_sizeX");
+		G4double box_sizeY = PC -> GetParDouble("Up_Shield_sizeY");
+		G4double box_sizeZ = PC -> GetParDouble("Up_Shield_sizeZ");
+		G4double box_Zpos = PC -> GetParDouble("Up_Shield_Zpos");
+
+		G4Box* solidBox = new G4Box("Box",0.5*box_sizeX,0.5*box_sizeY,0.5*box_sizeZ);
+		G4LogicalVolume* logicBox = new G4LogicalVolume(solidBox,Collmat,"Box");
+
+		G4VisAttributes* attBox = new G4VisAttributes(G4Colour(G4Colour::Gray()));
+		attBox -> SetVisibility(true);
+		attBox -> SetForceWireframe(true);
+		logicBox -> SetVisAttributes(attBox);
+
+		G4ThreeVector posCollX(0, 0, box_Zpos + box_sizeZ/2.);
+		new G4PVPlacement(0, posCollX, logicBox, "Box", logicWorld, false, boxID, checkOverlaps);
+    }
+
+
 
 	if (PC->GetParBool("SC1_In")) // box style
 	{
@@ -200,33 +226,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(0, posCollX, logicBox, "SC2", logicWorld, false, CollID, checkOverlaps);
 	}
 
-		if (PC->GetParBool("H_PolyBox"))
-	{
-		G4Material* H_Poly = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
-		
-		G4int	 CollID	   = PC ->GetParInt("SBoxID");
-		G4double CollDimX  = PC ->GetParDouble("SBox_sizeX");	// one brick [] 
-		G4double CollDimY  = PC ->GetParDouble("SBox_sizeY");
-		G4double CollDimZ  = PC ->GetParDouble("SBox_sizeZ");
-		G4double CollPosZ  = PC ->GetParDouble("SBox_Zpos");
-
-		//Volumes
-		G4Box* solidBoxColl = new G4Box("solidBoxColl", CollDimX/2., CollDimY/2., CollDimZ/2.);
-
-		G4LogicalVolume* logicCollX = new G4LogicalVolume(solidBoxColl, H_Poly, "logicCollimatorX");
-
-		//vis attributes
-		G4VisAttributes* attColl = new G4VisAttributes(G4Colour(G4Colour::Cyan()));
-		attColl->SetVisibility(true);
-		attColl->SetForceWireframe(true);
-		logicCollX->SetVisAttributes(attColl);
-
-		//Position
-		G4ThreeVector posCollX(0, 0, CollPosZ + CollDimZ/2.);
-		new G4PVPlacement(0, posCollX, logicCollX, "CollimatorX", logicWorld, false, CollID, checkOverlaps);
-	}
-
-		if (PC->GetParBool("H_BPolyBox"))
+		if (PC->GetParBool("Absorber_In"))
 	{
 		G4Material* H_Poly = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
 		G4Material* Boron = nist->FindOrBuildMaterial("G4_B");
@@ -258,7 +258,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(0, posCollX, logicCollX, "CollimatorX", logicWorld, false, CollID, checkOverlaps);
 	}
 
-		if (PC->GetParBool("H_BPolyBox_slit"))
+		if (PC->GetParBool("Absorber_Slit_In"))
 	{
 		G4Material* H_Poly = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
 		G4Material* Boron = nist->FindOrBuildMaterial("G4_B");
