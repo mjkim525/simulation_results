@@ -50,6 +50,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		G4double world_sizeY = PC -> GetParDouble("World_sizeY");
 		G4double world_sizeZ = PC -> GetParDouble("World_sizeZ");
 		G4Material* world_mat = nist->FindOrBuildMaterial("G4_Galactic");
+	//	G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
 		G4Box* solidWorld =    
 			new G4Box("World",0.5*world_sizeX, 0.5*world_sizeY, 0.5*world_sizeZ);
@@ -61,7 +62,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		// Box collimator
 	if (PC->GetParBool("BoxIn"))
 	{
-		G4Material* Collmat = new G4Material("Acrylic",1.19*g/cm3,3,kStateSolid, fLabTemp);
+		G4Material* Collmat = new G4Material("Acrylic0",1.19*g/cm3,3,kStateSolid, fLabTemp);
 		Collmat -> AddElement(elC,5);
 		Collmat -> AddElement(elH,8);
 		Collmat -> AddElement(elO,2);
@@ -84,10 +85,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(0, posCollX, logicBox, "Box", logicWorld, false, boxID, checkOverlaps);
     }
 
+	
+
 		//Target
 	if (PC->GetParBool("TargetIn"))
 	{
-		G4Material* TargetMat = nist->FindOrBuildMaterial("G4_GRAPHITE");
+		G4Material* TargetMat = nist->FindOrBuildMaterial("G4_C");
 		//G4Material* TargetMat = nist->FindOrBuildMaterial("G4_Al");
 
 		G4int TargetID = PC -> GetParInt("TargetID");
@@ -111,7 +114,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		// Collimator
 	if (PC->GetParBool("CollimatorIn"))
 	{
-		G4Material* Collmat = new G4Material("Acrylic",1.19*g/cm3,3,kStateSolid, 293.15*kelvin);
+		G4Material* Collmat = new G4Material("Acrylic1",1.19*g/cm3,3,kStateSolid, fLabTemp);
 		Collmat -> AddElement(elC,5);
 		Collmat -> AddElement(elH,8);
 		Collmat -> AddElement(elO,2);
@@ -153,7 +156,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 	if (PC->GetParBool("Up_Shield_In"))
 	{
-		G4Material* Collmat = new G4Material("Acrylic",1.19*g/cm3,3,kStateSolid, fLabTemp);
+		G4Material* Collmat = new G4Material("Acrylic2",1.19*g/cm3,3,kStateSolid, fLabTemp);
 		Collmat -> AddElement(elC,5);
 		Collmat -> AddElement(elH,8);
 		Collmat -> AddElement(elO,2);
@@ -180,7 +183,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 	if (PC->GetParBool("SC1_In")) // box style
 	{
-		G4Material* Collmat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+		//G4Material* Collmat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+		G4Material* Collmat = nist->FindOrBuildMaterial("G4_POLYSTYRENE");
 
 		G4int	 CollID	   = PC ->GetParInt("SC1_ID");
 		G4double CollDimX  = PC ->GetParDouble("SC1_sizeX");	// one brick [] 
@@ -199,14 +203,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicBox -> SetVisAttributes(attBox);
 
 		G4ThreeVector posCollX(CollPosX,CollPosY, CollPosZ + CollDimZ/2.);
-		new G4PVPlacement(0, posCollX, logicBox, "SC1", logicWorld, false, CollID, checkOverlaps);
+		G4double theta = 16.*deg;  // 구면 좌표계의 극각도
+		G4double phi = 0.*deg;    // 구면 좌표계의 방위각
+		G4RotationMatrix* rotm  = new G4RotationMatrix(phi, -theta, 0.);
+		new G4PVPlacement(rotm, posCollX, logicBox, "SC1", logicWorld, false, CollID, checkOverlaps);
+		//new G4PVPlacement(0, posCollX, logicBox, "SC1", logicWorld, false, CollID, checkOverlaps);
 	}
 
 	if (PC->GetParBool("SC2_In"))
 	{
-		G4Material* Collmat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
-
-		G4int	 CollID	   = PC ->GetParInt("SC2_ID");
+		//G4Material* Collmat = nist->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+		G4Material* Collmat = nist->FindOrBuildMaterial("G4_POLYSTYRENE");
+		
+ 		G4int	 CollID	   = PC ->GetParInt("SC2_ID");
 		G4double CollDimX  = PC ->GetParDouble("SC2_sizeX");	// one brick [] 
 		G4double CollDimY  = PC ->GetParDouble("SC2_sizeY");
 		G4double CollDimZ  = PC ->GetParDouble("SC2_sizeZ");
@@ -223,7 +232,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicBox -> SetVisAttributes(attBox);
 
 		G4ThreeVector posCollX(CollPosX,CollPosY, CollPosZ + CollDimZ/2.);
-		new G4PVPlacement(0, posCollX, logicBox, "SC2", logicWorld, false, CollID, checkOverlaps);
+		G4double theta = 16.*deg;  // 구면 좌표계의 극각도
+		G4double phi = 0.*deg;    // 구면 좌표계의 방위각
+		G4RotationMatrix* rotm  = new G4RotationMatrix(phi, -theta, 0.);
+		new G4PVPlacement(rotm, posCollX, logicBox, "SC2", logicWorld, false, CollID, checkOverlaps);
+		//new G4PVPlacement(0, posCollX, logicBox, "SC2", logicWorld, false, CollID, checkOverlaps);
 	}
 
 		if (PC->GetParBool("Absorber_In"))
@@ -256,6 +269,134 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		//Position
 		G4ThreeVector posCollX(0, 0, CollPosZ + CollDimZ/2.);
 		new G4PVPlacement(0, posCollX, logicCollX, "CollimatorX", logicWorld, false, CollID, checkOverlaps);
+	}
+
+		if (PC->GetParBool("Absorber_for_SC_In"))
+	{
+		G4Material* fBP1 = new G4Material("Acrylic_SC",1.19*g/cm3,3,kStateSolid, fLabTemp);
+		fBP1 -> AddElement(elC,5);
+		fBP1 -> AddElement(elH,8);
+		fBP1 -> AddElement(elO,2);
+		
+		G4int	 CollID	   = PC ->GetParInt("SBox_SC_ID");
+		G4double CollDimX  = PC ->GetParDouble("SBox_SC_sizeX");	// one brick [] 
+		G4double CollDimY  = PC ->GetParDouble("SBox_SC_sizeY");
+		G4double CollDimZ  = PC ->GetParDouble("SBox_SC_sizeZ");
+		G4double CollPosX  = PC ->GetParDouble("SBox_SC_Xpos");
+		G4double CollPosY  = PC ->GetParDouble("SBox_SC_Ypos");
+		G4double CollPosZ  = PC ->GetParDouble("SBox_SC_Zpos");
+		G4double CollslitX = PC ->GetParDouble("SBox_SC_slitX");
+		G4double CollslitY = PC ->GetParDouble("SBox_SC_slitY");
+
+		//Volumes
+
+		G4Box* solidBoxColl = new G4Box("solidBoxColl", CollDimX/2., CollDimY/2., CollDimZ/2.);
+
+		G4Box* solidSubCollX = new G4Box("solidSubCollX", CollslitX/2., CollslitY/2. , CollDimZ/2.);
+		//G4Box* solidSubCollY = new G4Box("solidSubCollY", CollDimX/2.-0.1 , CollslitY/2., CollDimZ/2.);
+		G4SubtractionSolid* solidCollX = new G4SubtractionSolid("solidCollX", solidBoxColl, solidSubCollX, 0, fZero);
+		//G4SubtractionSolid* solidCollY = new G4SubtractionSolid("solidCollY", solidBoxColl, solidSubCollY, 0, fZero);
+		G4LogicalVolume* logicCollX = new G4LogicalVolume(solidCollX, fBP1, "logicCollimatorX");
+		//G4LogicalVolume* logicCollY = new G4LogicalVolume(solidCollY, fBP1, "logicCollimatorY");
+
+		//vis attributes
+		G4VisAttributes* attColl = new G4VisAttributes(G4Colour(G4Colour::Cyan()));
+		attColl->SetVisibility(true);
+		//attColl->SetForceWireframe(true);
+		logicCollX->SetVisAttributes(attColl);
+
+		//Position
+		G4ThreeVector posCollX(CollPosX, CollPosY, CollPosZ + CollDimZ/2.);
+		G4double theta = 16.*deg;  // 구면 좌표계의 극각도
+		G4double phi = 0.*deg;    // 구면 좌표계의 방위각
+		G4RotationMatrix* rotm  = new G4RotationMatrix(phi, -theta, 0.);
+		new G4PVPlacement(rotm, posCollX, logicCollX, "Absorber_for_SC_In", logicWorld, false, CollID, checkOverlaps);
+		//new G4PVPlacement(rotm, posCollY, logicCollX, "CollimatorY", logicWorld, false, CollID, checkOverlaps);
+// 		std::cout << "Position X: " << posCollX.x() << ", Y: " << posCollX.y() << ", Z: " << posCollX.z() << std::endl;
+// std::cout << "Rotation Matrix: " << rotm->yy() << " " << rotm->yx() << " " << rotm->yz() << " ... " << std::endl;
+	}
+
+	if (PC->GetParBool("AlShield_for_SC_In"))
+	{
+		G4Material* fBP1 = nist->FindOrBuildMaterial("G4_Al");
+
+		G4int	 CollID	   = PC ->GetParInt("SBoxAl_SC_ID");
+		G4double CollDimX  = PC ->GetParDouble("SBoxAl_SC_sizeX");	// one brick [] 
+		G4double CollDimY  = PC ->GetParDouble("SBoxAl_SC_sizeY");
+		G4double CollDimZ  = PC ->GetParDouble("SBoxAl_SC_sizeZ");
+		G4double CollPosX  = PC ->GetParDouble("SBoxAl_SC_Xpos");
+		G4double CollPosY  = PC ->GetParDouble("SBoxAl_SC_Ypos");
+		G4double CollPosZ  = PC ->GetParDouble("SBoxAl_SC_Zpos");
+		G4double CollslitX = PC ->GetParDouble("SBoxAl_SC_slitX");
+		G4double CollslitY = PC ->GetParDouble("SBoxAl_SC_slitY");
+
+		//Volumes
+
+		G4Box* solidBoxColl = new G4Box("solidBoxColl", CollDimX/2., CollDimY/2., CollDimZ/2.);
+
+		G4Box* solidSubCollX = new G4Box("solidSubCollX", CollslitX/2., CollslitY/2. , CollDimZ/2.);
+		//G4Box* solidSubCollY = new G4Box("solidSubCollY", CollDimX/2.-0.1 , CollslitY/2., CollDimZ/2.);
+		G4SubtractionSolid* solidCollX = new G4SubtractionSolid("solidCollX", solidBoxColl, solidSubCollX, 0, fZero);
+		//G4SubtractionSolid* solidCollY = new G4SubtractionSolid("solidCollY", solidBoxColl, solidSubCollY, 0, fZero);
+		G4LogicalVolume* logicCollX = new G4LogicalVolume(solidCollX, fBP1, "logicCollimatorX");
+		//G4LogicalVolume* logicCollY = new G4LogicalVolume(solidCollY, fBP1, "logicCollimatorY");
+
+		//vis attributes
+		G4VisAttributes* attColl = new G4VisAttributes(G4Colour(G4Colour::Cyan()));
+		attColl->SetVisibility(true);
+		//attColl->SetForceWireframe(true);
+		logicCollX->SetVisAttributes(attColl);
+
+		//Position
+		G4ThreeVector posCollX(CollPosX, CollPosY, CollPosZ + CollDimZ/2.);
+		G4double theta = 16.*deg;  // 구면 좌표계의 극각도
+		G4double phi = 0.*deg;    // 구면 좌표계의 방위각
+		G4RotationMatrix* rotm  = new G4RotationMatrix(phi, -theta, 0.);
+		new G4PVPlacement(rotm, posCollX, logicCollX, "AlShield_for_SC_In", logicWorld, false, CollID, checkOverlaps);
+		std::cout << PrintMaterialOfVolume(CollID) << endl;	
+
+}
+
+	if (PC->GetParBool("Collimator_for_SC_In"))
+	{
+		G4Material* fBP1 = new G4Material("Acrylic_SC_Collimator",1.19*g/cm3,3,kStateSolid, fLabTemp);
+		fBP1 -> AddElement(elC,5);
+		fBP1 -> AddElement(elH,8);
+		fBP1 -> AddElement(elO,2);
+		
+		G4int	 CollID	   = PC ->GetParInt("Collimator_SC_ID");
+		G4double CollDimX  = PC ->GetParDouble("Collimator_SC_sizeX");	// one brick [] 
+		G4double CollDimY  = PC ->GetParDouble("Collimator_SC_sizeY");
+		G4double CollDimZ  = PC ->GetParDouble("Collimator_SC_sizeZ");
+		G4double CollPosX  = PC ->GetParDouble("Collimator_SC_Xpos");
+		G4double CollPosY  = PC ->GetParDouble("Collimator_SC_Ypos");
+		G4double CollPosZ  = PC ->GetParDouble("Collimator_SC_Zpos");
+		G4double CollslitX = PC ->GetParDouble("Collimator_SC_slitX");
+		G4double CollslitY = PC ->GetParDouble("Collimator_SC_slitY");
+
+		//Volumes
+
+		G4Box* solidBoxColl = new G4Box("solidBoxColl", CollDimX/2., CollDimY/2., CollDimZ/2.);
+
+		G4Box* solidSubCollX = new G4Box("solidSubCollX", CollslitX/2., CollslitY/2. , CollDimZ/2.);
+		G4SubtractionSolid* solidCollX = new G4SubtractionSolid("solidCollX", solidBoxColl, solidSubCollX, 0, fZero);
+
+		G4LogicalVolume* logicCollX = new G4LogicalVolume(solidCollX, fBP1, "logicCollimatorX");
+
+
+		//vis attributes
+		G4VisAttributes* attColl = new G4VisAttributes(G4Colour(G4Colour::Cyan()));
+		attColl->SetVisibility(true);
+		logicCollX->SetVisAttributes(attColl);
+
+		//Position
+		G4ThreeVector posCollX(CollPosX, CollPosY, CollPosZ + CollDimZ/2.);
+		G4double theta = 16.*deg;  // 구면 좌표계의 극각도
+		G4double phi = 0.*deg;    // 구면 좌표계의 방위각
+		G4RotationMatrix* rotm  = new G4RotationMatrix(phi, -theta, 0.);
+		new G4PVPlacement(rotm, posCollX, logicCollX, "Collimator_for_SC_In", logicWorld, false, CollID, checkOverlaps);
+// 		std::cout << "Position X: " << posCollX.x() << ", Y: " << posCollX.y() << ", Z: " << posCollX.z() << std::endl;
+// std::cout << "Rotation Matrix: " << rotm->yy() << " " << rotm->yx() << " " << rotm->yz() << " ... " << std::endl;
 	}
 
 		if (PC->GetParBool("Absorber_Slit_In"))
