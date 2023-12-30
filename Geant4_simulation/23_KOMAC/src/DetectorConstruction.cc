@@ -353,7 +353,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		G4double phi = 0.*deg;    // 구면 좌표계의 방위각
 		G4RotationMatrix* rotm  = new G4RotationMatrix(phi, -theta, 0.);
 		new G4PVPlacement(rotm, posCollX, logicCollX, "AlShield_for_SC_In", logicWorld, false, CollID, checkOverlaps);
-		std::cout << PrintMaterialOfVolume(CollID) << endl;	
+			
 
 }
 
